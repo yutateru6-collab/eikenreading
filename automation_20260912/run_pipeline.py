@@ -7,6 +7,16 @@ apply_patches(data.SETS)
 
 import audit
 import generate
+from docx.enum.text import WD_BREAK
+
+
+def reliable_page_break(doc):
+    p = doc.add_paragraph()
+    p.paragraph_format.space_after = 0
+    p.add_run().add_break(WD_BREAK.PAGE)
+
+
+generate.page_break = reliable_page_break
 
 
 def main():
