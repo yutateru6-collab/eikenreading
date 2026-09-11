@@ -34,10 +34,10 @@ jobs:
           python -m pip install python-docx pillow pymupdf
 
       - name: Audit fixed content data
-        run: python automation_20260912/audit.py --content-only
+        run: python automation_20260912/run_pipeline.py content
 
       - name: Generate Word files
-        run: python automation_20260912/generate.py
+        run: python automation_20260912/run_pipeline.py generate
 
       - name: Convert final Word files to PDF
         run: |
@@ -49,7 +49,7 @@ jobs:
           rmdir generated/automation-20260912/pdf_tmp
 
       - name: Audit PDFs and render every page
-        run: python automation_20260912/audit.py --pdf
+        run: python automation_20260912/run_pipeline.py pdf
 
       - name: Commit generated artifacts
         run: |
