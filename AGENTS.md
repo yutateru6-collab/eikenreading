@@ -1,5 +1,9 @@
 # 制作開始前に必読：全指示の理解・実装・検証
 
+<!-- DISTRACTOR-DESIGN-V1 -->
+> **選択肢作成前の必須参照：** `rules/DISTRACTOR_DESIGN.md` と `references/OFFICIAL_DISTRACTOR_CASEBOOK.md` を全文読む。公式の観測事例と独自の設計基準を区別し、各候補の本文根拠・もっともらしい理由・決定的なずれ・問いへの適合を確認する。未読・未確認のまま候補を確定しない。既定のレイアウト、SOURCE-FIRST、自然な全訳は維持する。
+
+
 Version: 1.0 / 2026-09-11
 
 ## 0. 必須命令
