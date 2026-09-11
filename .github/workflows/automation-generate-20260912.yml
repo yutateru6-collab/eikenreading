@@ -1,0 +1,64 @@
+name: Generate EIKEN Grade 2 Reading 2026-09-12
+
+on:
+  push:
+    branches:
+      - automation-output-20260912-7
+    paths:
+      - 'automation_20260912/**'
+      - '.github/workflows/automation-generate-20260912.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out output branch
+        uses: actions/checkout@v4
+        with:
+          ref: automation-output-20260912-7
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install document tools and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreoffice-writer fonts-noto-cjk fonts-liberation
+          python -m pip install --upgrade pip
+          python -m pip install python-docx pillow pymupdf
+
+      - name: Audit fixed content data
+        run: python automation_20260912/audit.py --content-only
+
+      - name: Generate Word files
+        run: python automation_20260912/generate.py
+
+      - name: Convert final Word files to PDF
+        run: |
+          mkdir -p generated/automation-20260912/pdf_tmp
+          for f in generated/automation-20260912/*.docx; do
+            libreoffice --headless --convert-to pdf --outdir generated/automation-20260912/pdf_tmp "$f"
+          done
+          mv generated/automation-20260912/pdf_tmp/*.pdf generated/automation-20260912/
+          rmdir generated/automation-20260912/pdf_tmp
+
+      - name: Audit PDFs and render every page
+        run: python automation_20260912/audit.py --pdf
+
+      - name: Commit generated artifacts
+        run: |
+          git config user.name 'openai-automation'
+          git config user.email 'openai-automation@users.noreply.github.com'
+          git add generated/automation-20260912
+          if git diff --cached --quiet; then
+            echo 'No generated changes to commit.'
+          else
+            git commit -m 'Generate Grade 2 Reading artifacts for 2026-09-12'
+            git push origin automation-output-20260912-7
+          fi
