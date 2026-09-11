@@ -119,20 +119,19 @@ def check_pdfs():
                     if f"({n})" not in text:
                         failures.append(f"{slug}: expected ({n}) on problem page R{problem_page}, PDF page {problem_page+1}")
         full='\n'.join(page_text)
+        normfull=re.sub(r"\s+","",full)
         forbidden=['教材メモ',"Teacher's Note",'正答位置チェック','OBJECTIVE FORMAT CHECK']
         for bad in forbidden:
             if bad in full:
                 failures.append(f"{slug}: forbidden student-facing text present: {bad}")
-        if 'FULL JAPANESE TRANSLATION' not in full or '全文和訳' not in full:
+        if 'FULLJAPANESETRANSLATION' not in normfull or '全文和訳' not in normfull:
             failures.append(f"{slug}: missing full Japanese translation section")
         last=page_text[-1]
         if not any(t[-25:] in last for t in s['part3b']['translation'][-1:]):
-            # text extraction can wrap, use a normalized tail check
             normlast=re.sub(r"\s+","",last)
             normtail=re.sub(r"\s+","",s['part3b']['translation'][-1])[-20:]
             if normtail not in normlast:
                 failures.append(f"{slug}: final PDF page does not appear to end with final translation")
-        # Render all pages for visual inspection.
         render_dir=OUT/f"{slug}_render"
         render_dir.mkdir(exist_ok=True)
         for i,p in enumerate(d):
